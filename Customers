@@ -1,0 +1,230 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package Csc112Project;
+
+import java.io.File;
+import java.util.Scanner;
+
+public class Customers {
+
+    // ============== ATTRIBUTES ==============
+    private int customerId;          // Unique ID for each customer
+    private String name;             // Customer full name
+    private String email;            // Email address
+
+    static LinkedList<Customers> customers = new LinkedList<>(); // List of all registered customers
+    private LinkedList<Orders> ordersList; // Each customer has their own orders
+
+    static Scanner input = new Scanner(System.in);
+
+    // ============== CONSTRUCTORS ==============
+    public Customers() { // Default constructor
+        this.ordersList = new LinkedList<>();
+    }
+
+    public Customers(int customerId, String name, String email) { // Constructor with parameters
+        this.customerId = customerId;
+        this.name = name;
+        this.email = email;
+        this.ordersList = new LinkedList<>();
+    }
+
+    // ============== REGISTER CUSTOMER ==============
+    // Allows adding a new customer after checking ID uniqueness.
+    public void registerCustomer() {
+        Customers c = new Customers();
+
+        System.out.print("Enter Customer ID: ");
+        c.setCustomerId(input.nextInt());
+
+        while (searchById(c.getCustomerId())) {
+            System.out.print("ID already exists, please enter another one: ");
+            c.setCustomerId(input.nextInt());
+        }
+
+        input.nextLine(); // clear buffer
+
+        System.out.print("Enter Customer Name: ");
+        String fullName = input.nextLine();
+        c.setName(fullName);
+
+        System.out.print("Enter Customer Email: ");
+        String mail = input.nextLine();
+        c.setEmail(mail);
+
+        customers.insert(c);
+        System.out.println("Customer " + c.getName() + " has been successfully added!");
+    }
+
+    // ============== SEARCH BY ID ==============
+    // Checks if a customer exists by ID.
+    public boolean searchById(int id) {
+        if (customers.empty()) return false;
+
+        customers.findFirst();
+        while (true) {
+            Customers temp = customers.retrieve();
+            if (temp.getCustomerId() == id)
+                return true;
+            if (customers.last()) break;
+            customers.findNext();
+        }
+        return false;
+    }
+
+    // ============== DISPLAY ALL CUSTOMERS ==============
+    // Displays all customers stored in the list.
+    public void displayAllCustomers() {
+        if (customers.empty()) {
+            System.out.println("No customers found in the system.");
+            return;
+        }
+
+        System.out.println("\nList of Registered Customers:");
+        customers.findFirst();
+        while (true) {
+            Customers c = customers.retrieve();
+            System.out.println("- ID: " + c.getCustomerId() + " | Name: " + c.getName() + " | Email: " + c.getEmail());
+            if (customers.last()) break;
+            customers.findNext();
+        }
+    }
+
+    // ============== PLACE NEW ORDER ==============
+    // Allows the customer to create a new order.
+    public void placeOrder() {
+        System.out.print("Enter Customer ID to place order: ");
+        int id = input.nextInt();
+
+        Customers c = findCustomerById(id);
+        if (c == null) {
+            System.out.println("Customer not found!");
+            return;
+        }
+
+        Orders newOrder = new Orders();
+        newOrder.createOrder(c);
+
+        c.ordersList.insert(newOrder);
+        System.out.println("Order placed successfully for " + c.getName());
+    }
+
+    // ============== SHOW CUSTOMER ORDER HISTORY ==============
+    // Displays all orders belonging to a specific customer.
+    public void showOrdersHistory() {
+        System.out.print("\nEnter Customer ID to show orders: ");
+        int id = input.nextInt();
+
+        Customers c = findCustomerById(id);
+        if (c == null) {
+            System.out.println("Customer not found!");
+            return;
+        }
+
+        if (c.ordersList.empty()) {
+            System.out.println("No orders found for " + c.getName());
+            return;
+        }
+
+        System.out.println("\nOrders History for " + c.getName() + ":");
+        c.ordersList.findFirst();
+        while (true) {
+            Orders o = c.ordersList.retrieve();
+            System.out.println("- Order ID: " + o.getOrderId() +
+                               " | Date: " + o.getOrderDate() +
+                               " | Total: " + o.getTotalPrice());
+            if (c.ordersList.last()) break;
+            c.ordersList.findNext();
+        }
+    }
+
+    // ============== FIND CUSTOMER BY ID ==============
+    // Returns the customer object that matches the given ID.
+    public Customers findCustomerById(int id) {
+        if (customers.empty()) return null;
+
+        customers.findFirst();
+        while (true) {
+            Customers c = customers.retrieve();
+            if (c.getCustomerId() == id)
+                return c;
+            if (customers.last()) break;
+            customers.findNext();
+        }
+        return null;
+    }
+
+    // ============== LOAD CUSTOMERS FROM CSV FILE ==============
+    // Reads customers data from a CSV file and adds them to the list.
+    public void loadCustomersFromCSV(String fileName) {
+        try {
+            File file = new File(fileName);
+            Scanner reader = new Scanner(file);
+            String line = reader.nextLine(); // skip header if exists
+
+            while (reader.hasNext()) {
+                line = reader.nextLine();
+                String[] data = line.split(",");
+                Customers c = new Customers(Integer.parseInt(data[0]), data[1], data[2]);
+                customers.insert(c);
+            }
+
+            reader.close();
+            System.out.println("Customers loaded successfully from file!");
+        } catch (Exception ex) {
+            System.out.println("Error loading customers: " + ex.getMessage());
+        }
+    }
+
+    // ============== REMOVE ORDER ==============
+    // Removes an order by its ID from the customer's order list.
+    public boolean RemoveOrder(Integer R) {
+        if (!ordersList.empty()) {
+            ordersList.findFirst();
+            while (!ordersList.last()) {
+                if (ordersList.retrieve().getOrderId() == R) {
+                    ordersList.remove();
+                    return true;
+                }
+                ordersList.findNext();
+            }
+            if (ordersList.retrieve().getOrderId() == R) {
+                ordersList.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    // ============== GETTERS AND SETTERS ==============
+    public int getCustomerId() { return customerId; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public LinkedList<Orders> getOrdersList() { return ordersList; }
+
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+    
+        
+    // ============== TOSTRING METHOD ==============
+    // Returns a readable representation of the customer.
+    @Override
+    public String toString() {
+        String str = "\nCustomer info : " + "ID=" + customerId + ", Name=" + name + ", Email=" + email;
+        if (!ordersList.empty()) {
+            str += "\nOrders List: ";
+            ordersList.findFirst();
+            while (!ordersList.last()) {
+                str += ordersList.retrieve() + " ";
+                ordersList.findNext();
+            }
+            str += ordersList.retrieve();
+        }
+        return str;
+    }
+
+}
