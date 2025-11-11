@@ -13,11 +13,9 @@ public class Customers {
     private int customerId;          // Unique ID for each customer
     private String name;             // Customer full name
     private String email;            // Email address
-
-    static LinkedList<Customers> customers = new LinkedList<>(); // List of all registered customers
     private LinkedList<Orders> ordersList; // Each customer has their own orders
-
-    static Scanner input = new Scanner(System.in);
+    static LinkedList<Customers> customers = new LinkedList<>();
+    
 
     // ============== CONSTRUCTORS ==============
     public Customers() { // Default constructor
@@ -33,29 +31,11 @@ public class Customers {
 
     // ============== REGISTER CUSTOMER ==============
     // Allows adding a new customer after checking ID uniqueness.
-    public void registerCustomer() {
-        Customers c = new Customers();
-
-        System.out.print("Enter Customer ID: ");
-        c.setCustomerId(input.nextInt());
-
-        while (searchById(c.getCustomerId())) {
-            System.out.print("ID already exists, please enter another one: ");
-            c.setCustomerId(input.nextInt());
-        }
-
-        input.nextLine(); // clear buffer
-
-        System.out.print("Enter Customer Name: ");
-        String fullName = input.nextLine();
-        c.setName(fullName);
-
-        System.out.print("Enter Customer Email: ");
-        String mail = input.nextLine();
-        c.setEmail(mail);
-
+    public void registerCustomer(int id, String fullName, String mail) {
+        Customers c = new Customers(id, fullName, mail);
         customers.insert(c);
-        System.out.println("Customer " + c.getName() + " has been successfully added!");
+        System.out.println("Customer " + c.getName() + " with Id " + c.getCustomerId()+ " has been successfully added!");
+    
     }
 
     // ============== SEARCH BY ID ==============
@@ -94,30 +74,26 @@ public class Customers {
 
     // ============== PLACE NEW ORDER ==============
     // Allows the customer to create a new order.
-    public void placeOrder() {
-        System.out.print("Enter Customer ID to place order: ");
-        int id = input.nextInt();
-
+    public void placeOrder(int id) {
+        
         Customers c = findCustomerById(id);
         if (c == null) {
             System.out.println("Customer not found!");
             return;
         }
-
         Orders newOrder = new Orders();
         newOrder.createOrder(c);
 
         c.ordersList.insert(newOrder);
         System.out.println("Order placed successfully for " + c.getName());
+       
     }
 
     // ============== SHOW CUSTOMER ORDER HISTORY ==============
     // Displays all orders belonging to a specific customer.
-    public void showOrdersHistory() {
-        System.out.print("\nEnter Customer ID to show orders: ");
-        int id = input.nextInt();
-
+    public void showOrdersHistory(int id) {
         Customers c = findCustomerById(id);
+
         if (c == null) {
             System.out.println("Customer not found!");
             return;
@@ -156,27 +132,6 @@ public class Customers {
         return null;
     }
 
-    // ============== LOAD CUSTOMERS FROM CSV FILE ==============
-    // Reads customers data from a CSV file and adds them to the list.
-    public void loadCustomersFromCSV(String fileName) {
-        try {
-            File file = new File(fileName);
-            Scanner reader = new Scanner(file);
-            String line = reader.nextLine(); // skip header if exists
-
-            while (reader.hasNext()) {
-                line = reader.nextLine();
-                String[] data = line.split(",");
-                Customers c = new Customers(Integer.parseInt(data[0]), data[1], data[2]);
-                customers.insert(c);
-            }
-
-            reader.close();
-            System.out.println("Customers loaded successfully from file!");
-        } catch (Exception ex) {
-            System.out.println("Error loading customers: " + ex.getMessage());
-        }
-    }
 
     // ============== REMOVE ORDER ==============
     // Removes an order by its ID from the customer's order list.
