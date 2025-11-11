@@ -1,0 +1,139 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package Csc112Project;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+/**
+ * CSV READER CLASS - DATA LOADING LAYER
+ * 
+ * Responsibilities:
+ * - Load all initial data from CSV files
+ * - Separate file reading responsibility from business logic
+ * - Centralized data loading for better maintenance
+ * 
+ * @author fanar
+ */
+public class CSVReader {
+    
+    /**
+     * Load all initial data from CSV files at application startup
+     */
+    public static void loadAllData() {
+        System.out.println("Loading initial data from CSV files...");
+        
+        loadProductsCSV("products.csv");
+        loadCustomersCSV("customers.csv");
+        loadReviewsCSV("reviews.csv");
+        loadOrdersCSV("orders.csv");
+        
+        System.out.println(" All data loaded successfully!");
+    }
+
+    // ---- Products CSV Loader ----
+    public static void loadProductsCSV(String path) {
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line;
+            boolean first = true;
+            while ((line = br.readLine()) != null) {
+                if (first && line.toLowerCase().contains("product")) {
+                    first = false;
+                    continue; // Skip header
+                }
+                String[] t = line.split(",", -1);
+                if (t.length < 4) continue;
+                
+                int id = Integer.parseInt(t[0].trim());
+                String name = t[1].trim();
+                double price = Double.parseDouble(t[2].trim());
+                int stock = Integer.parseInt(t[3].trim());
+
+                if (Main.products.empty()) {
+                    Main.products.insert(new Product(id, name, price, stock));
+                } else {
+                    Main.products.findFirst();
+                    Main.products.insert(new Product(id, name, price, stock));
+                }
+               
+            }
+            System.out.println("Products data loaded successfully!");
+        } catch (IOException e) {
+            System.out.println("Error reading products CSV: " + e.getMessage());
+        } 
+    }
+
+    // ---- Reviews CSV Loader ----
+    public static void loadReviewsCSV(String path) {
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line;
+            boolean first = true;
+            while ((line = br.readLine()) != null) {
+                if (first && line.toLowerCase().contains("review")) {
+                    first = false;
+                    continue; // Skip header
+                }
+                String[] t = line.split(",", -1);
+                if (t.length < 5) continue;
+                
+                int rid = Integer.parseInt(t[0].trim());
+                int pid = Integer.parseInt(t[1].trim());
+                int cid = Integer.parseInt(t[2].trim());
+                int rate = Integer.parseInt(t[3].trim());
+                String comment = t[4].trim();
+
+                if (Main.reviews.empty()) {
+                    Main.reviews.insert(new Review(rid, pid, cid, rate, comment));
+                } else {
+                    Main.reviews.findFirst();
+                    Main.reviews.insert(new Review(rid, pid, cid, rate, comment));
+                }
+            }
+            System.out.println("Reviews data loaded successfully!");
+        } catch (IOException e) {
+            System.out.println("Error reading reviews CSV: " + e.getMessage());
+        } 
+    }
+
+    // ---- Customers CSV Loader ----
+    public static void loadCustomersCSV(String path) {
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line;
+            boolean first = true;
+            while ((line = br.readLine()) != null) {
+                if (first && line.toLowerCase().contains("customer")) {
+                    first = false;
+                    continue; // Skip header
+                }
+                String[] data = line.split(",", -1);
+                if (data.length < 3) continue;
+                
+                int customerId = Integer.parseInt(data[0].trim());
+                String name = data[1].trim();
+                String email = data[2].trim();
+                
+                Customers c = new Customers(customerId, name, email);
+                
+                if (Customers.customers.empty()) {
+                    Customers.customers.insert(c);
+                } else {
+                    Customers.customers.findFirst();
+                    Customers.customers.insert(c);
+                }
+            }
+            System.out.println(" Customers data loaded successfully!");
+        } catch (IOException e) {
+            System.out.println("Error reading customers CSV: " + e.getMessage());
+        }
+    }
+
+    // ---- Orders CSV Loader ----
+    public static void loadOrdersCSV(String path) {
+        
+    }
+    
+   
+}
