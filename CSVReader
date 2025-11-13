@@ -130,10 +130,66 @@ public class CSVReader {
         }
     }
 
-    // ---- Orders CSV Loader ----
+    // ---- Order CSV Loader ----
     public static void loadOrdersCSV(String path) {
-        
+    try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+        String line;
+        boolean first = true;
+
+        while ((line = br.readLine()) != null) {
+            if (first) {
+                if (line.toLowerCase().contains("order")) {
+                    first = false;
+                    continue;
+                }
+                first = false;
+            }
+
+            if (line.trim().isEmpty()) continue;
+
+            String[] t = line.split(",", -1);
+            if (t.length < 6) continue; // نتأكد أقل شيء 6 أعمدة
+
+            int orderId = Integer.parseInt(t[0].trim());
+            int customerId = Integer.parseInt(t[1].trim());
+
+            String rawProducts = t[2].trim();
+            rawProducts = rawProducts.replace("\"", "");       
+            String[] pTokens = rawProducts.split(";");
+            Integer[] pids = new Integer[pTokens.length];
+            for (int i = 0; i < pTokens.length; i++) {
+                pids[i] = Integer.parseInt(pTokens[i].trim());
+            }
+
+            double totalPrice = Double.parseDouble(t[3].trim());
+
+            String dateStr = t[4].trim();
+            String isoDateStr;
+            try {
+                java.time.format.DateTimeFormatter f = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                java.time.LocalDate d = java.time.LocalDate.parse(dateStr, f);
+                isoDateStr = d.toString(); // ISO: yyyy-MM-dd
+            } catch (Exception e) {
+                isoDateStr = dateStr;
+            }
+
+            String status = t[5].trim();
+
+            Order o = new Order(orderId, customerId, pids, totalPrice, isoDateStr, status);
+
+            if (Main.orders.empty()) {
+                Main.orders.insert(o);
+            } else {
+                Main.orders.findFirst();
+                Main.orders.insert(o);
+            }
+        }
+
+        System.out.println("Orders data loaded successfully!");
+    } catch (IOException e) {
+        System.out.println("Error reading orders CSV: " + e.getMessage());
     }
+}
     
    
 }
