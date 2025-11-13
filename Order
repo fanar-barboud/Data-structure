@@ -6,13 +6,12 @@ import java.util.Date;
 public class Order {
     
     /*============ ATTRIBUTES ==============*/
-    int orderId;
-    int customerId;
-    LinkedList <Integer> products = new LinkedList <Integer> ();  
-    double totalPrice;
-    LocalDate date;
-    String status; // (pending, shipped, delivered, cancelled)
-    public static LinkedList<Order> orders = new LinkedList<Order> ();
+    private int orderId;
+    private int customerId;
+    private LinkedList <Integer> products = new LinkedList <Integer> ();  
+    private double totalPrice;
+    private LocalDate date;
+    private String status; // (pending, shipped, delivered, cancelled)
 
     /*============= CONSTRUCTORS =============*/
     public Order() {
