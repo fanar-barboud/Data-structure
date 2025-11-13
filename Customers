@@ -1,6 +1,7 @@
 
 package Csc112Project;
 
+
 import java.io.File;
 import java.util.Scanner;
 
@@ -10,7 +11,7 @@ public class Customers {
     private int customerId;          // Unique ID for each customer
     private String name;             // Customer full name
     private String email;            // Email address
-    private LinkedList<Orders> ordersList; // Each customer has their own orders
+    private LinkedList<Order> ordersList; // Each customer has their own orders
     static LinkedList<Customers> customers = new LinkedList<>();
     
 
@@ -74,7 +75,7 @@ public class Customers {
             System.out.println("Customer not found!");
             return;
         }
-        Orders newOrder = new Orders();
+        Order newOrder = new Order();
         newOrder.createOrder(c);
 
         c.ordersList.insert(newOrder);
@@ -100,9 +101,9 @@ public class Customers {
         System.out.println("\nOrders History for " + c.getName() + ":");
         c.ordersList.findFirst();
         while (true) {
-            Orders o = c.ordersList.retrieve();
+            Order o = c.ordersList.retrieve();
             System.out.println("- Order ID: " + o.getOrderId() +
-                               " | Date: " + o.getOrderDate() +
+                               " | Date: " + o.getDate() +
                                " | Total: " + o.getTotalPrice());
             if (c.ordersList.last()) break;
             c.ordersList.findNext();
@@ -151,7 +152,7 @@ public class Customers {
     public int getCustomerId() { return customerId; }
     public String getName() { return name; }
     public String getEmail() { return email; }
-    public LinkedList<Orders> getOrdersList() { return ordersList; }
+    public LinkedList<Order> getOrdersList() { return ordersList; }
 
     public void setCustomerId(int customerId) { this.customerId = customerId; }
     public void setName(String name) { this.name = name; }
