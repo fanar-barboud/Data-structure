@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Csc112Project;
 
 import java.io.File;
@@ -9,7 +6,7 @@ import java.util.Scanner;
 
 public class Customers {
 
-    // ============== ATTRIBUTES ==============
+    //ATTRIBUTES 
     private int customerId;          // Unique ID for each customer
     private String name;             // Customer full name
     private String email;            // Email address
@@ -17,10 +14,6 @@ public class Customers {
     static LinkedList<Customers> customers = new LinkedList<>();
     
 
-    // ============== CONSTRUCTORS ==============
-    public Customers() { // Default constructor
-        this.ordersList = new LinkedList<>();
-    }
 
     public Customers(int customerId, String name, String email) { // Constructor with parameters
         this.customerId = customerId;
@@ -29,7 +22,7 @@ public class Customers {
         this.ordersList = new LinkedList<>();
     }
 
-    // ============== REGISTER CUSTOMER ==============
+    // REGISTER CUSTOMER 
     // Allows adding a new customer after checking ID uniqueness.
     public void registerCustomer(int id, String fullName, String mail) {
         Customers c = new Customers(id, fullName, mail);
@@ -38,7 +31,7 @@ public class Customers {
     
     }
 
-    // ============== SEARCH BY ID ==============
+    //  SEARCH BY ID 
     // Checks if a customer exists by ID.
     public boolean searchById(int id) {
         if (customers.empty()) return false;
@@ -54,7 +47,7 @@ public class Customers {
         return false;
     }
 
-    // ============== DISPLAY ALL CUSTOMERS ==============
+    //  DISPLAY ALL CUSTOMERS 
     // Displays all customers stored in the list.
     public void displayAllCustomers() {
         if (customers.empty()) {
@@ -72,7 +65,7 @@ public class Customers {
         }
     }
 
-    // ============== PLACE NEW ORDER ==============
+    // PLACE NEW ORDER 
     // Allows the customer to create a new order.
     public void placeOrder(int id) {
         
@@ -89,7 +82,7 @@ public class Customers {
        
     }
 
-    // ============== SHOW CUSTOMER ORDER HISTORY ==============
+    //  SHOW CUSTOMER ORDER HISTORY 
     // Displays all orders belonging to a specific customer.
     public void showOrdersHistory(int id) {
         Customers c = findCustomerById(id);
@@ -116,7 +109,7 @@ public class Customers {
         }
     }
 
-    // ============== FIND CUSTOMER BY ID ==============
+    // FIND CUSTOMER BY ID 
     // Returns the customer object that matches the given ID.
     public Customers findCustomerById(int id) {
         if (customers.empty()) return null;
@@ -133,7 +126,7 @@ public class Customers {
     }
 
 
-    // ============== REMOVE ORDER ==============
+    // REMOVE ORDER 
     // Removes an order by its ID from the customer's order list.
     public boolean RemoveOrder(Integer R) {
         if (!ordersList.empty()) {
@@ -154,7 +147,7 @@ public class Customers {
     }
 
 
-    // ============== GETTERS AND SETTERS ==============
+    //  GETTERS AND SETTERS 
     public int getCustomerId() { return customerId; }
     public String getName() { return name; }
     public String getEmail() { return email; }
@@ -165,7 +158,7 @@ public class Customers {
     public void setEmail(String email) { this.email = email; }
     
         
-    // ============== TOSTRING METHOD ==============
+    //  TOSTRING METHOD 
     // Returns a readable representation of the customer.
     @Override
     public String toString() {
